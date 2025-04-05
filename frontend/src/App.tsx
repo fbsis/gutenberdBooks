@@ -2,9 +2,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Home from './pages/Home';
-// import BookDetails from './pages/BookDetails'; // Removing since module not found
 import { BookProvider } from './contexts/BookContext';
-import { BookDetails } from './components/BookDetails';
+import { BookDetails } from './pages/BookDetails';
 
 const queryClient = new QueryClient();
 
