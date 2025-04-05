@@ -45,6 +45,7 @@ export const BookDetails: FC = () => {
   return (
     <div className="w-full max-w-4xl mx-auto px-2 sm:px-4 mt-8">
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+   
         {/* Book Header */}
         <div className="bg-gradient-to-r from-purple-800 to-indigo-800 text-white p-6">
           <h1 className="text-2xl sm:text-3xl font-bold">Pride and Prejudice</h1>

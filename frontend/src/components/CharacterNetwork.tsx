@@ -1,7 +1,6 @@
 import { FC, useMemo } from 'react';
 
 interface Character {
-  id: string;
   label: string;
 }
 
@@ -82,10 +81,10 @@ export const CharacterNetwork: FC<CharacterNetworkProps> = ({ characters, relati
    */
   const relationsByCharacter = characters.map(char => {
     const characterRelations = relations.filter(
-      rel => rel.source === char.id || rel.target === char.id
+      rel => rel.source === char.label || rel.target === char.label
     ).map(rel => {
       const relatedChar = characters.find(c => 
-        c.id === (rel.source === char.id ? rel.target : rel.source)
+        c.label === (rel.source === char.label ? rel.target : rel.source)
       );
       return relatedChar?.label || '';
     });
@@ -109,8 +108,8 @@ export const CharacterNetwork: FC<CharacterNetworkProps> = ({ characters, relati
         >
           {/* Relationship edges */}
           {relations.map((relation, index) => {
-            const source = charactersWithPositions.find(c => c.id === relation.source);
-            const target = charactersWithPositions.find(c => c.id === relation.target);
+            const source = charactersWithPositions.find(c => c.label === relation.source);
+            const target = charactersWithPositions.find(c => c.label === relation.target);
             if (!source || !target) return null;
             
             return (
@@ -129,7 +128,7 @@ export const CharacterNetwork: FC<CharacterNetworkProps> = ({ characters, relati
 
           {/* Character nodes */}
           {charactersWithPositions.map((char) => (
-            <g key={char.id}>
+            <g key={char.label}>
               <rect
                 x={char.x}
                 y={char.y}
