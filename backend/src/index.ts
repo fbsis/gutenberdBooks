@@ -1,14 +1,20 @@
 import express from 'express';
+import swaggerUi from 'swagger-ui-express';
+import bookRoutes from './routes/bookRoutes';
+import { swaggerDocument } from './swagger';
 
 const app = express();
-const port = 4000;
+const PORT = process.env.PORT || 4000;
 
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.json({ message: 'Hello from Express + TypeScript!' });
-});
+// Swagger documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+// Book routes
+app.use('/books', bookRoutes);
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+  console.log(`Swagger documentation available at http://localhost:${PORT}/api-docs`);
 }); 
