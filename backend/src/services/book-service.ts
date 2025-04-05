@@ -38,10 +38,10 @@ export class BookService {
     // Use AI to process the content
     const bookMetadata = await this.aiService.extractBookMetadataFromHtml(gutenbergData.metadata);
     this.logger.info('Book metadata', { bookMetadata });
-    
-    const bookInfo = await this.aiService.getBookInformation(bookMetadata, gutenbergData.content);
 
+    const bookInfo = await this.aiService.getBookInformation(bookMetadata, gutenbergData.content);
     this.logger.info('Storing book in cache', { bookId: id });
+    
     // Store in cache for future requests
     await this.cache.set(`book:${id}`, JSON.stringify(bookInfo));
 
