@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { getBookById } from '../controllers/bookController';
+import { getBookById } from '../controllers/book-controller';
 const router = Router();
 
 router.get('/:id', async (req: Request, res: Response) => {
