@@ -18,7 +18,6 @@ WORKDIR /app
 
 COPY package*.json ./
 
-# Instala apenas dependências de produção
 RUN npm install --production
 
 COPY --from=builder /app/dist ./dist
