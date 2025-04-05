@@ -1,11 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { useBook } from '../hooks/useBook';
-
-interface Character {
-  name: string;
-  interactions: number;
-  description: string;
-}
+import CharacterNetwork from '../components/CharacterNetwork';
 
 interface Quote {
   text: string;
@@ -14,19 +9,62 @@ interface Quote {
   chapter: number;
 }
 
-export const BookDetails = () => {
-  const { id } = useParams();
-  console.log(id);
-  const { bookQuery } = useBook();
+interface Character {
+  id: string;
+  label: string;
+}
 
-  const mockCharacters: Character[] = [
-    { name: 'Elizabeth Bennet', interactions: 145, description: 'The novel\'s protagonist' },
-    { name: 'Mr. Darcy', interactions: 123, description: 'A wealthy gentleman' },
-    { name: 'Jane Bennet', interactions: 78, description: 'Elizabeth\'s elder sister' },
-    { name: 'Mr. Bingley', interactions: 67, description: 'Darcy\'s wealthy friend' },
-  ];
+interface Relation {
+  source: string;
+  target: string;
+}
 
-  const mockQuotes: Quote[] = [
+interface BookData {
+  title: string;
+  author: string;
+  summary: string;
+  genres: string[];
+  characters: Character[];
+  relations: Relation[];
+  quotes: Quote[];
+}
+
+// All mock data centralized in one object
+const bookDetailsData: BookData = {
+  title: "Pride and Prejudice",
+  author: "Jane Austen",
+  summary: "A masterpiece of wit and social observation, Pride and Prejudice follows the turbulent relationship between Elizabeth Bennet, the daughter of a country gentleman, and Fitzwilliam Darcy, a rich aristocratic landowner. Their personalities, pride, and prejudices lead them to misjudge each other repeatedly.",
+  genres: ["Romance", "Classic", "Fiction"],
+  characters: [
+    { id: 'elizabeth', label: 'Elizabeth Bennet' },
+    { id: 'darcy', label: 'Mr. Darcy' },
+    { id: 'jane', label: 'Jane Bennet' },
+    { id: 'bingley', label: 'Mr. Bingley' },
+    { id: 'lydia', label: 'Lydia Bennet' },
+    { id: 'wickham', label: 'Mr. Wickham' },
+    { id: 'collins', label: 'Mr. Collins' },
+    { id: 'charlotte', label: 'Charlotte Lucas' },
+    { id: 'bennet', label: 'Mrs. Bennet' },
+    { id: 'gardiner', label: 'Mrs. Gardiner' }
+  ],
+  relations: [
+    { source: 'elizabeth', target: 'darcy' },
+    { source: 'elizabeth', target: 'jane' },
+    { source: 'elizabeth', target: 'charlotte' },
+    { source: 'elizabeth', target: 'wickham' },
+    { source: 'jane', target: 'bingley' },
+    { source: 'jane', target: 'elizabeth' },
+    { source: 'lydia', target: 'wickham' },
+    { source: 'charlotte', target: 'collins' },
+    { source: 'elizabeth', target: 'collins' },
+    { source: 'elizabeth', target: 'gardiner' },
+    { source: 'darcy', target: 'bingley' },
+    { source: 'darcy', target: 'wickham' },
+    { source: 'bennet', target: 'elizabeth' },
+    { source: 'bennet', target: 'jane' },
+    { source: 'bennet', target: 'lydia' }
+  ],
+  quotes: [
     {
       text: "It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.",
       character: 'Narrator',
@@ -44,8 +82,14 @@ export const BookDetails = () => {
       character: 'Mr. Darcy',
       sentiment: 'positive',
       chapter: 34
-    },
-  ];
+    }
+  ]
+};
+
+export const BookDetails = () => {
+  const { id } = useParams();
+  console.log(id);
+  const { bookQuery } = useBook();
 
   if (bookQuery.isLoading) {
     return (
@@ -72,50 +116,33 @@ export const BookDetails = () => {
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
         {/* Book Header */}
         <div className="bg-gradient-to-r from-purple-800 to-indigo-800 text-white p-6">
-          <h1 className="text-2xl sm:text-3xl font-bold">Pride and Prejudice</h1>
-          <p className="text-purple-200 mt-2">by Jane Austen</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">{bookDetailsData.title}</h1>
+          <p className="text-purple-200 mt-2">by {bookDetailsData.author}</p>
           <div className="flex flex-wrap gap-2 mt-4">
-            <span className="px-3 py-1 bg-purple-700 rounded-full text-sm">Romance</span>
-            <span className="px-3 py-1 bg-purple-700 rounded-full text-sm">Classic</span>
-            <span className="px-3 py-1 bg-purple-700 rounded-full text-sm">Fiction</span>
+            {bookDetailsData.genres.map((genre, index) => (
+              <span key={index} className="px-3 py-1 bg-purple-700 rounded-full text-sm">
+                {genre}
+              </span>
+            ))}
           </div>
         </div>
 
         {/* Book Summary */}
         <div className="p-6 border-b">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">Summary</h2>
-          <p className="text-gray-600">
-            A masterpiece of wit and social observation, Pride and Prejudice follows the turbulent relationship between Elizabeth Bennet, the daughter of a country gentleman, and Fitzwilliam Darcy, a rich aristocratic landowner. Their personalities, pride, and prejudices lead them to misjudge each other repeatedly.
-          </p>
+          <p className="text-gray-600">{bookDetailsData.summary}</p>
         </div>
 
-        {/* Character Network */}
-        <div className="p-6 border-b">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Character Interactions</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {mockCharacters.map((character) => (
-              <div 
-                key={character.name}
-                className="p-4 rounded-lg border border-gray-200 hover:border-purple-500 transition-colors"
-                style={{
-                  transform: `scale(${0.8 + (character.interactions / 200)})`
-                }}
-              >
-                <div className="flex items-center justify-between">
-                  <h3 className="font-medium text-gray-800">{character.name}</h3>
-                  <span className="text-sm text-purple-600">{character.interactions} interactions</span>
-                </div>
-                <p className="text-sm text-gray-600 mt-2">{character.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+        <CharacterNetwork 
+          characters={bookDetailsData.characters} 
+          relations={bookDetailsData.relations} 
+        />
 
         {/* Key Quotes */}
         <div className="p-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">Key Quotes</h2>
           <div className="space-y-4">
-            {mockQuotes.map((quote, index) => (
+            {bookDetailsData.quotes.map((quote, index) => (
               <div 
                 key={index}
                 className={`p-4 rounded-lg ${
