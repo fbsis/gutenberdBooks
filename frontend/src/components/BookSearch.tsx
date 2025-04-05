@@ -1,13 +1,16 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useBook } from '../hooks/useBook';
 
 export const BookSearch = () => {
   const [bookId, setBookId] = useState('');
   const { setCurrentBookId, bookQuery } = useBook();
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setCurrentBookId(bookId);
+    navigate(`/book/${bookId}`);
   };
 
   return (
