@@ -1,11 +1,13 @@
 import express from 'express';
 import swaggerUi from 'swagger-ui-express';
+import cors from 'cors';
 import bookRoutes from './routes/bookRoutes';
 import { swaggerDocument } from './swagger';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+app.use(cors()); // Enable CORS for all origins
 app.use(express.json());
 
 // Swagger documentation
