@@ -1,6 +1,6 @@
 # Full Stack TypeScript Application
 
-A full-stack application with React (Vite + TypeScript) frontend and Node.js (Express + TypeScript) backend, featuring OpenAI integration and Redis caching.
+A full-stack application with React (Vite + TypeScript) frontend and Node.js (Express + TypeScript) backend, featuring OpenAI integration and Redis caching. The application fetches books from Project Gutenberg and uses AI to analyze and provide structured information about them.
 
 ## Prerequisites
 
@@ -45,9 +45,21 @@ This will start:
 - URL: http://localhost:4000
 - Swagger Documentation: http://localhost:4000/api-docs
 - Features:
-  - OpenAI Integration
+  - Project Gutenberg Integration
+  - OpenAI Analysis
   - Redis Caching
   - TypeScript/Express
+
+#### Data Flow
+1. Request book by ID
+2. Check Redis cache
+3. If not cached:
+   - Fetch from Project Gutenberg:
+     - Content: `https://www.gutenberg.org/files/{id}/{id}-0.txt`
+     - Metadata: `https://www.gutenberg.org/ebooks/{id}`
+   - Process with OpenAI
+   - Store in cache
+4. Return structured book information
 
 #### Redis Management
 - Redis Server: localhost:6379
