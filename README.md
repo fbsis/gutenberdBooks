@@ -1,51 +1,84 @@
 # Full Stack TypeScript Application
 
-A full-stack application with React (Vite + TypeScript) frontend and Node.js (Express + TypeScript) backend.
+A full-stack application with React (Vite + TypeScript) frontend and Node.js (Express + TypeScript) backend, featuring OpenAI integration and Redis caching.
 
-# Prerequisites
+## Prerequisites
 
 - Docker
 - Docker Compose
 - Node.js 20+ (for local development without Docker)
+- OpenAI API Key
 
 ## Quick Start
 
-### Development Environment
+### Development Environment (Recommended)
 
-Run the application with hot-reload:
+The project includes a development-focused Docker Compose configuration with features like hot-reload, debugging, and development tools.
 
 ```bash
+# Start the development environment with hot-reload
 docker-compose -f docker-compose.dev.yml up --build
+
+# To rebuild and start
+docker-compose -f docker-compose.dev.yml up --build --force-recreate
+
+# To stop
+docker-compose -f docker-compose.dev.yml down
 ```
 
-Access points:
-- Frontend: http://localhost:5173
-- Backend: http://localhost:4000
+This will start:
+- Frontend with Vite dev server
+- Backend with ts-node and hot-reload
+- Redis server
+- Rebrow (Redis UI)
 
-Features:
-- Hot-reload for both frontend and backend
-- Real-time file changes
-- Development debugging capabilities
+### Access Points & Services
 
-### Production Environment
+#### Frontend
+- URL: http://localhost:5173
+- Features:
+  - Hot-reload enabled
+  - Real-time file changes
+  - Development debugging
 
-Run the optimized production build:
+#### Backend API
+- URL: http://localhost:4000
+- Swagger Documentation: http://localhost:4000/api-docs
+- Features:
+  - OpenAI Integration
+  - Redis Caching
+  - TypeScript/Express
 
-```bash
-docker-compose up --build
+#### Redis Management
+- Redis Server: localhost:6379
+- Redis UI (Rebrow): http://localhost:5001
+  - Access Configuration:
+    - Host: `redis`
+    - Port: `6379`
+    - Database: `0`
+  - Features:
+    - Real-time data monitoring
+    - Cache inspection
+    - Key management
+
+### Environment Configuration
+
+Create `.env` files in respective folders:
+
+```env
+# frontend/.env
+VITE_API_URL=http://localhost:4000
+
+# backend/.env
+PORT=4000
+NODE_ENV=development
+OPENAI_API_KEY=your-api-key-here
+REDIS_URL=redis://redis:6379
 ```
 
-Access points:
-- Frontend: http://localhost:80
-- Backend: http://localhost:4000
+## Local Development (Alternative)
 
-Production features:
-- Nginx server for frontend
-- Optimized and minified assets
-- Smaller Docker images
-- Production-only dependencies
-
-## Local Development (Without Docker)
+Only use this if you can't use Docker for some reason.
 
 ### Frontend
 
@@ -63,20 +96,6 @@ npm install
 npm run dev
 ```
 
-## Available Scripts
-
-### Frontend
-
-- `npm run dev`: Start development server
-- `npm run build`: Create production build
-- `npm run preview`: Preview production build locally
-
-### Backend
-
-- `npm run dev`: Start development server
-- `npm run build`: Compile TypeScript
-- `npm start`: Start production server
-
 ## Tech Stack
 
 ### Frontend
@@ -89,42 +108,44 @@ npm run dev
 - Node.js
 - Express
 - TypeScript
+- OpenAI
+- Redis
 
 ### DevOps
 - Docker
 - Docker Compose
 - Nginx
-
-## Environment Variables
-
-Create `.env` files in frontend and backend folders if needed:
-
-```env
-# frontend/.env
-VITE_API_URL=http://localhost:4000
-
-# backend/.env
-PORT=4000
-```
+- Rebrow (Redis UI)
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Ports in use**: Ensure ports 80, 4000, and 5173 are available
-2. **Permissions**: Unix systems might require `sudo` for port 80
-3. **Hot-reload issues**: Check WATCHPACK_POLLING in docker-compose.dev.yml
+1. **Ports in Use**
+   - 5173: Frontend Development
+   - 4000: Backend API
+   - 6379: Redis
+   - 5001: Rebrow UI
+   
+   Solution: Ensure these ports are available or modify in docker-compose.dev.yml
+
+2. **Redis Connection Issues**
+   - Check if Redis container is running: `docker ps`
+   - Verify Redis URL in backend .env
+   - Try connecting via Rebrow UI to test connection
+
+3. **OpenAI Integration**
+   - Ensure valid API key in backend .env
+   - Check API response in backend logs
+   - Verify network connectivity
 
 ### Cleanup
 
 Remove all containers and volumes:
 
 ```bash
-# Development
-docker-compose -f docker-compose.dev.yml down -v
-
-# Production
-docker-compose down -v
+# Development environment cleanup
+docker-compose -f docker-compose.dev.yml down -v --remove-orphans
 ```
 
 ## Contributing
