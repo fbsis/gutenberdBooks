@@ -11,7 +11,7 @@ export const App = () => {
       <BookProvider>
         <div className="min-h-screen w-screen overflow-x-hidden bg-gray-100">
           <Header />
-          <main className="w-full px-4 py-8">
+          <main className="w-full p-2 sm:p-4 md:p-6 lg:p-8">
             <div className="max-w-7xl mx-auto">
               <BookSearch />
             </div>
