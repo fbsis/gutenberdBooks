@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Book } from '../types/Book';
 
 const api = axios.create({
-  baseURL: 'http://localhost:4000'
+  baseURL: 'http://localhost:4000/'
 });
 
 export const fetchBook = async (bookId: string): Promise<Book> => {
