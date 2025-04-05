@@ -24,24 +24,36 @@ const Quote = z.object({
 
 const BookData = z.object({
   title: z.string(),
-  author: z.string(),
+  coverUrl: z.string(),
+  authors: z.array(z.string()),
   year: z.number(),
   summary: z.string(),
   genres: z.array(z.string()),
+  mainCharacters: z.array(Character),
+  centralTheme: z.string(),
+  centralConflict: z.string(),
+  location: z.string(),
+  historicalContext: z.string(),
+  enviromentofSetting: z.string(),
+  styleofWriting: z.string(),
+  narrativePointofView: z.enum(['first person', 'third person']),
+  moralofStory: z.string(),
   characters: z.array(Character),
   relations: z.array(Relation),
-  quotes: z.array(Quote)
+  quotes: z.array(Quote),
 });
 
 const BookMetadata = z.object({
   title: z.string(),
-  author: z.string()
+  authors: z.array(z.string()),
+  coverUrl: z.string()
 });
 
 // OpenAI Configuration
 const AI_CONFIG = {
   MODEL: "gpt-4o-mini" as const,
-  MAX_CONTENT_LENGTH: 2000,
+  INITIAL_CONTENT_LENGTH: 1000,
+  MAX_CONTENT_LENGTH: 5000,
   RESPONSE_KEY: "book" as const,
   METADATA_KEY: "metadata" as const
 } as const;
@@ -49,9 +61,9 @@ const AI_CONFIG = {
 // System Messages
 const SYSTEM_MESSAGES = {
   BOOK_ANALYSIS: `You are a literary analysis AI that provides structured information about books. 
-    Analyze the provided text and extract key information including characters, relationships, and notable quotes.` as const,
+    Analyze the provided text and extract key information including summary, characters to extract relationships, relationships, interactions, and notable quotes.` as const,
   BOOK_REQUEST: (metadata: BookMetadataType, content: string) => 
-    `Analyze this book content and provide detailed information about it. Include all the requested fields. Book metadata: ${JSON.stringify(metadata)}. Book content: ${content.substring(1000, AI_CONFIG.MAX_CONTENT_LENGTH)}.` as const,
+    `Analyze this book content and provide detailed information about it. Include all the requested fields. Book metadata: ${JSON.stringify(metadata)}. Book content: ${content.substring(AI_CONFIG.INITIAL_CONTENT_LENGTH, AI_CONFIG.MAX_CONTENT_LENGTH)}.` as const,
   HTML_METADATA_ANALYSIS: `You are an AI specialized in extracting basic book metadata from HTML content.
     Focus on finding only the title and author from the HTML content.
     Look for this information in <title>, <meta> tags, headers, and structured data.` as const,
