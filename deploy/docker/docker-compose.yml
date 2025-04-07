@@ -1,9 +1,7 @@
-version: '3.8'
-
 services:
   frontend:
     build:
-      context: ../frontend
+      context: ../../frontend
       dockerfile: Dockerfile
     ports:
       - "80:80"
@@ -12,16 +10,17 @@ services:
       - backend
     environment:
       - NODE_ENV=production
+      - VITE_API_URL=http://backend:4000
 
   backend:
     build:
-      context: ../backend
+      context: ../../backend
       dockerfile: Dockerfile
     ports:
       - "4000:4000"
     restart: unless-stopped
     env_file:
-      - ../backend/.env
+      - ../../backend/.env
     environment:
       - NODE_ENV=production
       - PORT=4000
