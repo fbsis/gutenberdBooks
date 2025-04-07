@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gutenberg-config
+  namespace: gutenberg
+data:
+  NODE_ENV: "production"
+  PORT: "4000"
+  REDIS_URL: "redis://redis-service:6379"
+  OPENAI_API_KEY: "sk-proj-to-be-replaced-in-production"
