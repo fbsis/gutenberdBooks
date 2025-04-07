@@ -21,6 +21,10 @@ export class BookService {
     this.logger = Logger.getInstance('BookService');
   }
 
+  // Cache TTL calculation:
+  // 60 seconds * 60 minutes * 24 hours = 86400 seconds (24 hours)
+  private readonly CACHE_TTL_SECONDS = 60 * 60 * 24;
+
   async getBookById(id: string) {
     try {
       this.logger.info('Getting book by id', { bookId: id });
@@ -78,13 +82,13 @@ export class BookService {
 
   private async persistBookInCache(id: string, bookInfo: any): Promise<void> {
     this.logger.info('Storing book in cache', { bookId: id });
-    await this.cache.set(`book:${id}`, JSON.stringify(bookInfo));
+    await this.cache.set(`book:${id}`, JSON.stringify(bookInfo), this.CACHE_TTL_SECONDS);
     this.logger.info('Successfully processed and cached book', { bookId: id });
   }
 
   private async persistNotFoundStatusInCache(id: string): Promise<void> {
     this.logger.info('Caching book not found status', { bookId: id });
-    await this.cache.set(`book:${id}`, 'NOT_FOUND', 3600);
+    await this.cache.set(`book:${id}`, 'NOT_FOUND', this.CACHE_TTL_SECONDS);
   }
 
   private handlerBookError(error: unknown, id: string): never {
