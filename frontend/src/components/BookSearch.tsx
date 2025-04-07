@@ -15,8 +15,19 @@ export const BookSearch = () => {
 
   return (
     <div className="w-full max-w-xl mx-auto px-2 sm:px-4 mt-4 sm:mt-8">
+              <div className="bg-white/50 backdrop-blur-sm rounded-lg shadow-sm p-4 mb-4">
+                <div className="text-gray-600">
+                  <p className="mb-2">
+                    Welcome to our magical book analyzer! 📚✨ We use AI to dive deep into classic books and give you fascinating insights about characters, themes, and more.
+                  </p>
+                  <p className="text-sm italic text-gray-500">
+                    ⚠️ Fair warning: Our analysis might contain spoilers! Read at your own risk if you haven't finished the book yet. 
+                  </p>
+                </div>
+              </div>
       <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
         <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-3 sm:mb-4">Search Book by ID</h2>
+
         <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
           <div>
             <label 
@@ -68,6 +79,15 @@ export const BookSearch = () => {
             Error: {bookQuery.error.message}
           </div>
         )}
+
+      <div className="mt-6 text-xs sm:text-sm text-gray-500 italic text-center px-4">
+        <p>
+          All books are sourced from Project Gutenberg. These eBooks are for the use of anyone anywhere 
+          in the United States and most other parts of the world at no cost and with almost no restrictions 
+          whatsoever. You may copy them, give them away or re-use them under the terms of the Project 
+          Gutenberg License included with these eBooks or online at www.gutenberg.org.
+        </p>
+      </div>
       </div>
     </div>
   );
