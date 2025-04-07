@@ -48,6 +48,32 @@ export const BookDetails = () => {
   }
 
   if (bookQuery.isError) {
+    const is404 = (bookQuery.error as ErrorResponse)?.response?.status === 404;
+
+    if (is404) {
+      return (
+        <div className="w-full max-w-4xl mx-auto px-2 sm:px-4 mt-8">
+          <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+            <div className="mb-6">
+              <h1 className="text-6xl font-bold text-gray-300">404</h1>
+              <h2 className="text-2xl font-semibold text-gray-800 mt-4">
+                Book not found
+              </h2>
+              <p className="text-gray-600 mt-2">
+                Sorry, we couldn't find the book you're looking for.
+              </p>
+            </div>
+            <a
+              href="/"
+              className="inline-block px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+            >
+              Back to homepage
+            </a>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="w-full max-w-4xl mx-auto px-2 sm:px-4 mt-8">
         <div className="bg-white rounded-lg shadow-lg p-6">

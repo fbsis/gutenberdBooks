@@ -11,6 +11,7 @@ export const BookProvider = ({ children }: { children: ReactNode }) => {
     queryFn: () => currentBookId ? fetchBook(currentBookId) : null,
     enabled: !!currentBookId,
     staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
+    retry: false,
   });
 
   return (
