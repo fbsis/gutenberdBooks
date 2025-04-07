@@ -41,6 +41,8 @@ const BookData = z.object({
   characters: z.array(Character),
   relations: z.array(Relation),
   quotes: z.array(Quote),
+  conclusion: z.string(),
+  summaryWithSpoilersAndEnding: z.string(),
 });
 
 const BookMetadata = z.object({

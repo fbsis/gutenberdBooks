@@ -7,6 +7,8 @@ interface BookLiteraryAnalysisProps {
   styleofWriting: string;
   narrativePointofView: string;
   moralofStory: string;
+  conclusion: string;
+  summaryWithSpoilersAndEnding: string;
 }
 
 export const BookLiteraryAnalysis = ({
@@ -18,6 +20,8 @@ export const BookLiteraryAnalysis = ({
   styleofWriting,
   narrativePointofView,
   moralofStory,
+  conclusion,
+  summaryWithSpoilersAndEnding,
 }: BookLiteraryAnalysisProps) => {
   return (
     <div className="p-6 border-b">
@@ -58,6 +62,14 @@ export const BookLiteraryAnalysis = ({
             <p className="text-gray-600">{moralofStory}</p>
           </div>
         </div>
+      </div>
+      <div>
+        <h3 className="font-medium text-gray-800">Conclusion</h3>
+        <p className="text-gray-600">{conclusion}</p>
+      </div>
+      <div>
+        <h3 className="font-medium text-gray-800 mt-4">Summary with Spoilers and Ending</h3>
+        <p className="text-gray-600">{summaryWithSpoilersAndEnding}</p>
       </div>
     </div>
   );
