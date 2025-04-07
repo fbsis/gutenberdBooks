@@ -1,5 +1,6 @@
 import { HttpClient, IHttpClient } from './http-client';
 import { Logger } from './logger-service';
+import { BookNotFoundError } from '../errors/book-errors';
 
 export interface IGutenbergService {
   getBookContent(bookId: string): Promise<{
@@ -27,7 +28,12 @@ export class GutenbergService implements IGutenbergService {
       const [content, metadata] = await Promise.all([
         this.httpClient.get<string>(contentUrl),
         this.httpClient.get(metadataUrl)
-      ]);
+      ]).catch(error => {
+        if (error.response?.status === 404) {
+          throw new BookNotFoundError(bookId);
+        }
+        throw error;
+      });
 
       this.logger.info('Successfully fetched book data from Gutenberg', { 
         bookId,
@@ -37,6 +43,9 @@ export class GutenbergService implements IGutenbergService {
 
       return { content, metadata };
     } catch (error) {
+      if (error instanceof BookNotFoundError) {
+        throw error;
+      }
       this.logger.error('Error fetching from Gutenberg', error as Error, { bookId });
       throw new Error('Failed to fetch book from Gutenberg');
     }

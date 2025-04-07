@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosError } from 'axios';
 import { Logger } from './logger-service';
 
 export interface IHttpClient {
@@ -32,13 +32,14 @@ export class HttpClient implements IHttpClient {
         });
         return response.data;
       },
-      error => {
+      (error: AxiosError) => {
         this.logger.error('HTTP request failed', error, {
           url: error.config?.url,
           method: error.config?.method,
           status: error.response?.status
         });
-        throw new Error(error.response?.data?.message || 'Network request failed');
+        // Preserve the original error with response status
+        return Promise.reject(error);
       }
     );
   }

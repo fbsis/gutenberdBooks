@@ -4,6 +4,7 @@ import { Cache } from '../services/cache';
 import { AIService } from '../services/ai-service';
 import { GutenbergService } from '../services/gutenberg-service';
 import { Logger } from '../services/logger-service';
+import { BookNotFoundError } from '../errors/book-errors';
 
 export const getBookById = async (req: Request, res: Response) => {
   const logger = Logger.getInstance('BookController');
@@ -22,6 +23,11 @@ export const getBookById = async (req: Request, res: Response) => {
     
     return res.json(book);
   } catch (error) {
+    if (error instanceof BookNotFoundError) {
+      logger.warn('Book not found', { bookId: req.params.id });
+      return res.status(404).json({ error: error.message });
+    }
+    
     logger.error('Error fetching book', error as Error, { bookId: req.params.id });
     return res.status(500).json({ error: 'Internal server error' });
   }
