@@ -41,44 +41,6 @@ const GRAPH_CONFIG = {
 } as const;
 
 export const CharacterNetwork: FC<CharacterNetworkProps> = ({ characters, relations }) => {
-  /**
-   * Calculate character positions in a circular layout
-   * 
-   * This function:
-   * 1. Takes the list of characters and distributes them evenly in a circle
-   * 2. Uses trigonometry to calculate x,y coordinates:
-   *    - For each character, calculates an angle based on their index
-   *    - Uses cos(angle) for x coordinate and sin(angle) for y coordinate
-   *    - Multiplies by radius to determine distance from center
-   *    - Adds centerX/centerY to position the circle in the SVG
-   * 3. Returns characters with their calculated positions
-   * 
-   * The useMemo hook ensures positions are only recalculated when characters change
-   */
-  const charactersWithPositions = useMemo(() => {
-    return characters.map((char, index) => {
-      // Calculate angle for even distribution (in radians)
-      const angle = (index / characters.length) * 2 * Math.PI;
-      
-      // Convert polar coordinates to cartesian coordinates
-      return {
-        ...char,
-        x: GRAPH_CONFIG.centerX + GRAPH_CONFIG.radius * Math.cos(angle),
-        y: GRAPH_CONFIG.centerY + GRAPH_CONFIG.radius * Math.sin(angle)
-      };
-    });
-  }, [characters]);
-
-  /**
-   * Process relationships for each character
-   * 
-   * This function:
-   * 1. Maps through each character
-   * 2. Finds all relations where the character is either source or target
-   * 3. Extracts the related character's label
-   * 4. Removes duplicate relationships
-   * 5. Returns an array of characters with their related characters
-   */
   const relationsByCharacter = characters.map(char => {
     const characterRelations = relations.filter(
       rel => rel.source === char.label || rel.target === char.label
@@ -94,6 +56,31 @@ export const CharacterNetwork: FC<CharacterNetworkProps> = ({ characters, relati
       relations: [...new Set(characterRelations)] // Remove duplicates
     };
   });
+
+  // Filter characters that have relationships
+  const charactersWithRelations = characters.filter(char => 
+    relations.some(rel => rel.source === char.label || rel.target === char.label)
+  );
+
+  // Calculate positions only for characters with relationships
+  const charactersWithPositions = useMemo(() => {
+    return charactersWithRelations.map((char, index) => {
+      // Calculate angle for even distribution (in radians)
+      const angle = (index / charactersWithRelations.length) * 2 * Math.PI;
+      
+      // Convert polar coordinates to cartesian coordinates
+      return {
+        ...char,
+        x: GRAPH_CONFIG.centerX + GRAPH_CONFIG.radius * Math.cos(angle),
+        y: GRAPH_CONFIG.centerY + GRAPH_CONFIG.radius * Math.sin(angle)
+      };
+    });
+  }, [charactersWithRelations]);
+
+  // If there are no relationships, don't render anything
+  if (relations.length === 0) {
+    return null;
+  }
 
   return (
     <div className="p-6 border-b">
@@ -170,21 +157,25 @@ export const CharacterNetwork: FC<CharacterNetworkProps> = ({ characters, relati
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {relationsByCharacter.map((item, index) => (
+              {relationsByCharacter
+                .filter(item => item.relations.length > 0)
+                .map((item, index) => (
                 <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {item.character}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500">
                     <div className="flex flex-wrap gap-2">
-                      {item.relations.map((relation, idx) => (
-                        <span 
-                          key={idx}
-                          className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
-                        >
-                          {relation}
-                        </span>
-                      ))}
+                      {item.relations
+                        .filter(relation => relation && relation.trim() !== '')
+                        .map((relation, idx) => (
+                          <span 
+                            key={idx}
+                            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                          >
+                            {relation}
+                          </span>
+                        ))}
                     </div>
                   </td>
                 </tr>
