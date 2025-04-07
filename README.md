@@ -160,6 +160,114 @@ Remove all containers and volumes:
 docker-compose -f docker-compose.dev.yml down -v --remove-orphans
 ```
 
+
+## Book Reading Process
+
+### Detailed Flow
+
+The book reading process follows a sophisticated caching and enrichment strategy:
+
+1. **Initial Request**
+   - User requests a book by its ID
+   - System logs the request with a unique identifier
+
+2. **Cache Check**
+   - System checks Redis cache using key pattern `book:{id}`
+   - If found:
+     - Returns cached book data
+     - If cached as 'NOT_FOUND', returns 404 error
+   - Cache TTL: 24 hours
+
+3. **Gutenberg Fetch (If Not Cached)**
+   - Downloads book content from Project Gutenberg
+   - Retrieves both content and metadata
+   - Handles potential network errors
+
+4. **AI Enrichment**
+   - Processes book metadata with AI
+   - Extracts structured information
+   - Enhances book content with AI analysis
+
+5. **Cache Storage**
+   - Stores enriched book data in Redis
+   - Caches negative results for not found books
+   - Implements error handling and logging
+
+### System Architecture Diagram
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Backend
+    participant Redis
+    participant Gutenberg
+    participant OpenAI
+
+    Client->>Backend: [1] GET /api/books/{id}
+    Backend->>Redis: [2] Check Cache
+    
+    alt Cache Hit
+        Redis-->>Backend: [2.1] Return Cached Data
+        Backend-->>Client: Return Book Data
+    else Cache Miss
+        Redis-->>Backend: Cache Miss
+        Backend->>Gutenberg: [3] Fetch Book Content
+        Gutenberg-->>Backend: Return Raw Content
+        Backend->>OpenAI: [4] Process Content
+        OpenAI-->>Backend: Return Enriched Data
+        Backend->>Redis: [5] Store in Cache
+        Backend-->>Client: Return Book Data
+    end
+
+    note over Backend,Redis: Cache TTL: 24 hours
+    note over Backend,OpenAI: AI Enrichment includes:<br/>- Metadata extraction<br/>- Content analysis<br/>- Structure generation
+```
+
+### Error States Diagram
+
+```mermaid
+stateDiagram-v2
+    [*] --> RequestReceived
+    RequestReceived --> CacheCheck
+    
+    CacheCheck --> CacheHit: Found
+    CacheCheck --> GutenbergFetch: Not Found
+    
+    CacheHit --> ReturnData: Valid Data
+    CacheHit --> Return404: Marked as NOT_FOUND
+    
+    GutenbergFetch --> AIProcessing: Success
+    GutenbergFetch --> Return404: Book Not Found
+    GutenbergFetch --> ReturnError: Network Error
+    
+    AIProcessing --> CacheStore: Success
+    AIProcessing --> ReturnPartialData: AI Error
+    
+    CacheStore --> ReturnData: Success
+    CacheStore --> ReturnData: Cache Error
+    
+    ReturnData --> [*]
+    ReturnError --> [*]
+    Return404 --> [*]
+    ReturnPartialData --> [*]
+```
+
+### Error Handling
+
+- **Cache Errors**: Graceful fallback to Gutenberg
+- **Gutenberg Errors**: Returns 404 for not found books
+- **AI Processing Errors**: Logs error and returns base content
+- **System Errors**: Returns appropriate HTTP status codes
+
+### Performance Considerations
+
+- 24-hour cache TTL balances freshness and performance
+- Async processing for AI enrichment
+- Structured logging for monitoring
+- Error caching prevents repeated failed requests
+
+
+
 ## Contributing
 
 1. Fork the project
