@@ -1,14 +1,35 @@
+import { Link } from "react-router-dom";
+
 interface BookHeaderProps {
   title: string;
   authors: string[];
   coverUrl: string;
   year: number;
   genres: string[];
+  id: string;
 }
 
-export const BookHeader = ({ title, authors, coverUrl, year, genres }: BookHeaderProps) => {
+export const BookHeader = ({ title, authors, coverUrl, year, genres, id }: BookHeaderProps) => {
+  const downloadUrl = `https://www.gutenberg.org/ebooks/${id}`;
+
   return (
     <div className="bg-gradient-to-r from-purple-800 to-indigo-800 text-white p-6">
+      <div className="flex justify-between items-start mb-4">
+        <Link
+          to="/"
+          className="text-purple-200 hover:text-white transition-colors text-sm flex items-center gap-1"
+        >
+          ← Back
+        </Link>
+        <a
+          href={downloadUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-purple-200 hover:text-white transition-colors text-sm flex items-center gap-1"
+        >
+          Download ↓
+        </a>
+      </div>
       <div className="flex flex-col md:flex-row gap-6">
         {/* Book Cover */}
         <div className="w-48 h-64 flex-shrink-0">
